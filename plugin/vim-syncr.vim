@@ -1,17 +1,16 @@
 " Title: vim-syncr
 " Description: Upload/download/delete files and directories with rsync
-" Usage: :VsUpload, VsDownload and :VsDelete
+" Usage: :VsUpload, VsDownload and :VsRemove
 "        Mapped to
 "        <leader>vsu (vim-syncr upload)
+"        <leader>vsr (vim-syncr remove)
 "        <leader>vsd (vim-syncr download)
-"        <leader>vsdel (vim-syncr delete)
 "        See README for more
-" Github: https://github.com/s10g/vim-syncr
-" Author: Stig
 " License: MIT
+" Note: a fork from https://github.com/s10g/vim-syncr
 
 function! VS_GetConf()
-  let conf = {}
+  let conf = { 'port': 22, 'ignore': '.syncr' }
 
   let l_configpath = expand('%:p:h')
   let l_configfile = l_configpath . '/.syncr'
@@ -47,6 +46,7 @@ function! VS_GetConf()
     endfor
   endif
 
+
   return conf
 endfunction
 
@@ -55,7 +55,7 @@ function! VS_UploadFiles()
   let conf = VS_GetConf()
 
   if has_key(conf, 'remote_host')
-        let cmd = "rsync -avzhe ssh " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --exclude '.*'"
+        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
         execute '!' . cmd
   else
     echo 'Could not locate a .syncr configuration file. Aborting...'
@@ -63,11 +63,11 @@ function! VS_UploadFiles()
 endfunction
 
 
-function! VS_DeleteFiles()
+function! VS_RemoveFiles()
   let conf = VS_GetConf()
 
   if has_key(conf, 'remote_host')
-        let cmd = "rsync -avzhe ssh " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --exclude '.*'" . " --delete"
+        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --delete" . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
         execute '!' . cmd
   else
     echo 'Could not locate a .syncr configuration file. Aborting...'
@@ -79,7 +79,7 @@ function! VS_DownloadFiles()
   let conf = VS_GetConf()
 
   if has_key(conf, 'remote_host')
-        let cmd = "rsync -avzhe ssh " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path']  . " " . conf['project_path'] . " --exclude '.*'" 
+        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path']  . " " . conf['project_path'] . " --delete" . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
         execute '!' . cmd
   else
     echo 'Could not locate a .syncr configuration file. Aborting...'
@@ -87,9 +87,9 @@ function! VS_DownloadFiles()
 endfunction
 
 command! VsUpload call VS_UploadFiles()
-command! VsDelete call VS_DeleteFiles()
+command! VsRemove call VS_RemoveFiles()
 command! VsDownload call VS_DownloadFiles()
 
 nmap <leader>vsu :VsUpload<Esc>
-nmap <leader>vsdel :VsDelete<Esc>
-nmap <leader>vsd :VsDelete<Esc>
+nmap <leader>vsr :VsRemove<Esc>
+nmap <leader>vsd :VsDownload<Esc>

@@ -1,3 +1,6 @@
+## note
+a fork from [vim-syncr](https://github.com/s10g/vim-syncr), add `port` and `exclude` config support and change key mapping `vsdel` to `vsr`
+
 vim-syncr
 =========
 
@@ -24,10 +27,12 @@ Usage:
 Create a filed called .syncr in your project's root directory containing the following configuration, chmod it to 700 and chpwn it for security:
 ```
     $ cat /Desktop/projects/newproject/.syncr
+    port            22
     remote_host     www-dev.example.com
     remote_user     bob
     remote_path     /home/bob/html/site1/
     project_path    ~/Desktop/projects/site1/
+    exclude         .DS_Store,node_modules/,dist/
 ```
 
 
@@ -35,7 +40,7 @@ Create a filed called .syncr in your project's root directory containing the fol
     :VsUpload
 Syncs files and directories with remote
 
-    :VsDelete
+    :VsRemove
 Syncs any file or directory deletions with remote
 
     :VsDownload
@@ -46,8 +51,8 @@ Syncs files and directories with remote (grabs foreign new files)
     <leader>vsu
 Calls :VsUpload
 
-    <leader>vsdel
-Calls :VsDelete
+    <leader>vsr
+Calls :VsRemove
 
     <leader>vsd
 Calls :VsDownload
