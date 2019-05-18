@@ -10,7 +10,7 @@
 " Note: a fork from https://github.com/s10g/vim-syncr
 
 function! VS_GetConf()
-  let conf = { 'port': 22, 'ignore': '.syncr' }
+  let conf = { 'port': 22, 'ignore': '.syncr', 'exclude': ',', 'include': ',' }
 
   let l_configpath = expand('%:p:h')
   let l_configfile = l_configpath . '/.syncr'
@@ -55,7 +55,7 @@ function! VS_UploadFiles()
   let conf = VS_GetConf()
 
   if has_key(conf, 'remote_host')
-        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
+        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --include={" . conf['include'] . ',' . "}" . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
         execute '!' . cmd
   else
     echo 'Could not locate a .syncr configuration file. Aborting...'
@@ -67,7 +67,7 @@ function! VS_RemoveFiles()
   let conf = VS_GetConf()
 
   if has_key(conf, 'remote_host')
-        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --delete" . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
+        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['project_path'] . " " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path'] . " --delete" . " --include={" . conf['include'] . ',' . "}" . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
         execute '!' . cmd
   else
     echo 'Could not locate a .syncr configuration file. Aborting...'
@@ -79,7 +79,7 @@ function! VS_DownloadFiles()
   let conf = VS_GetConf()
 
   if has_key(conf, 'remote_host')
-        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path']  . " " . conf['project_path'] . " --delete" . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
+        let cmd = "rsync -avze " . "'ssh -p" . conf['port'] . "' " . conf['remote_user'] . "@" . conf['remote_host'] . ":" . conf['remote_path']  . " " . conf['project_path'] . " --delete" . " --include={" . conf['include'] . ',' . "}" . " --exclude={" . conf['ignore'] . ',' . conf['exclude'] . "}"
         execute '!' . cmd
   else
     echo 'Could not locate a .syncr configuration file. Aborting...'

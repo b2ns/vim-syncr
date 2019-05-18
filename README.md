@@ -1,5 +1,5 @@
 ## note
-a fork from [vim-syncr](https://github.com/s10g/vim-syncr), add `port` and `exclude` config support and change key mapping `vsdel` to `vsr`
+a fork from [vim-syncr](https://github.com/s10g/vim-syncr), add `port`, `exclude` and `include` config support and change key mapping `vsdel` to `vsr`
 
 vim-syncr
 =========
@@ -32,7 +32,8 @@ Create a filed called .syncr in your project's root directory containing the fol
     remote_user     bob
     remote_path     /home/bob/html/site1/
     project_path    ~/Desktop/projects/site1/
-    exclude         .DS_Store,node_modules/,dist/
+    exclude         .DS_Store,node_modules/,dist/*
+    include         dist/*.js
 ```
 
 
